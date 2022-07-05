@@ -14,15 +14,14 @@ namespace MotdBEAPI {
             for (int i = 0; i < str.Length; i += 2) {
                 data[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
             }
-            _ = LLNET.RemoteCall.DynamicRemoteCallAPI.ExportAs("MotdBE", "MotdBE", MotdBE);
-        }
-        public static string MotdBE(string ip, ushort port) {
-            Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            byte[] back = new byte[255];
-            socket.Connect(ip, port);
-            _ = socket.Send(data);
-            _ = socket.Receive(back);
-            return Encoding.UTF8.GetString(back);
+            _ = LLNET.RemoteCall.DynamicRemoteCallAPI.ExportAs("MotdBE", "MotdBE", (string ip, ushort port) => {
+                Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                byte[] back = new byte[255];
+                socket.Connect(ip, port);
+                _ = socket.Send(data);
+                _ = socket.Receive(back);
+                return Encoding.UTF8.GetString(back);
+            });
         }
     }
 }

@@ -19,9 +19,7 @@ namespace MotdBEAPI {
                     socket.Connect(ip, port);
                     _ = socket.Send(data);
                     _ = socket.Receive(back);
-                } catch (Exception ex) {
-                    logger.Error.WriteLine(ex);
-                }
+                } catch { }
                 return Encoding.UTF8.GetString(back);
             });
         }

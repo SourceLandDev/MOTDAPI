@@ -22,12 +22,13 @@ public class Main : IPluginInitializer
         _ = RemoteCallAPI.ExportAs("MOTDAPI", "GetFromBE", (string addr, ushort port) =>
         {
             byte[] back = new byte[1024 * 8]; // 防止返回内容过多导致撑爆字节数组
+            int length = 0;
             try
             {
                 IPAddress ip = GetIP(addr);
                 Socket socket = new(ip.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
                 socket.Connect(ip, port);
-                _ = socket.Send(data);
+                _ = socket.Send(BEData);
                 length = socket.Receive(back);
             }
             catch (SocketException ex)
@@ -55,7 +56,7 @@ public class Main : IPluginInitializer
             {
                 logger.Debug.WriteLine(ex);
             }
-            return length >= 5 ?
+            return length > 5 ?
                 Encoding.UTF8.GetString(back, 5, length - 5) : // Java服务器返回数据包头部有5个byte无效
                 Encoding.UTF8.GetString(back);
         });

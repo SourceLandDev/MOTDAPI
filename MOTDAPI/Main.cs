@@ -1,7 +1,9 @@
-﻿using LLNET.Core;
-using LLNET.Logger;
+﻿using LiteLoader.Logger;
+using LiteLoader.NET;
+using LiteLoader.RemoteCall;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -16,12 +18,16 @@ public class Main : IPluginInitializer
     public void OnInitialize()
     {
         Logger logger = new("MOTDAPI");
-        _ = LLNET.RemoteCall.RemoteCallAPI.ExportAs("MOTDAPI", "GetFromBE", (string ip, ushort port) =>
+        _ = RemoteCallAPI.ExportAs("MOTDAPI", "GetFromBE", (string addr, ushort port) =>
         {
-            Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             byte[] back = new byte[256];
             try
             {
+                if (!(IPAddress.TryParse(addr, out IPAddress ip) && ip != null)) // 无法直接转换的ip尝试使用dns解析
+                {
+                    ip = Dns.GetHostAddresses(addr)[0];
+                }
+                Socket socket = new(ip.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
                 socket.Connect(ip, port);
                 _ = socket.Send(data);
                 _ = socket.Receive(back);

@@ -21,7 +21,7 @@ public class Main : IPluginInitializer
         Logger logger = new("MOTDAPI");
         _ = RemoteCallAPI.ExportAs("MOTDAPI", "GetFromBE", (string addr, ushort port) =>
         {
-            byte[] back = new byte[1024 * 8]; // 防止返回内容过多导致撑爆字节数组
+            byte[] back = new byte[1024]; // 防止返回内容过多导致撑爆字节数组
             int length = 0;
             try
             {
@@ -41,7 +41,7 @@ public class Main : IPluginInitializer
         });
         _ = RemoteCallAPI.ExportAs("MOTDJEAPI", "GetFromJE", (string addr, ushort port) =>
         {
-            byte[] back = new byte[1024 * 16]; // 防止返回内容过多导致撑爆字节数组
+            byte[] back = new byte[1024 * 8]; // 防止返回内容过多导致撑爆字节数组；包含服务器图标的返回长度一般都在5k上下
             int length = 0;
             try
             {
